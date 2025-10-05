@@ -81,7 +81,7 @@ export class JSUtils {
   /**
    * Convert an XML string to a JSON object with strings only
    */
-  static xmlToJson(xml: string): string {
+  static xmlToJson(xml: string): any {
     const removeJsonTextAttribute = (value: string, parentElement: any) => {
       try {
         if (!parentElement) return;

@@ -1,6 +1,6 @@
 {
   "name": "@alexandre-khoury/general-utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": false,
   "description": "TS/JS utils that work in browser+node environments",
   "repository": {
@@ -20,7 +20,7 @@
     "dist/src"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
     "dev": "tsc",
     "lint": "eslint --fix ./src",
     "test": "vitest"
@@ -37,7 +37,8 @@
     "@types/node": "24.5.2",
     "eslint": "9.36.0",
     "typescript": "5.8.3",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "rimraf": "6.0.1"
   },
   "engines": {
     "node": ">=24",
