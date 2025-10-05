@@ -65,4 +65,53 @@ export class PhoneUtils {
     );
     return formatted;
   }
+
+  /**
+   * Try to make it work, by different ways, with a possible suggested country code
+   * validatePhone('12025550134', 'FR') => +1 2025550134
+   */
+  static validatePhone(
+    phoneNumber: string,
+    suggestedCountryCode: string,
+    allowedPhoneTypes = PhoneUtils.MOBILE_TYPES,
+  ): string {
+    if (suggestedCountryCode === 'UK') suggestedCountryCode = 'GB';
+    try {
+      const phoneUtil = GoogleLibPhoneNumber.PhoneNumberUtil.getInstance();
+
+      // Clean whitespace
+      const cleanedNumber = phoneNumber.replace(/\s/g, '');
+
+      let number: GoogleLibPhoneNumber.PhoneNumber;
+      if (cleanedNumber.startsWith('+')) {
+        // Already has + prefix, parse as-is
+        number = phoneUtil.parse(cleanedNumber);
+      } else if (cleanedNumber.startsWith('00')) {
+        // Convert 00 to + and parse
+        number = phoneUtil.parse(`+${cleanedNumber.slice(2)}`);
+      } else {
+        // The number is not international, we use the suggested country code
+        number = phoneUtil.parse(cleanedNumber, suggestedCountryCode);
+        if (!phoneUtil.isValidNumber(number)) {
+          // It was parsed but it could be invalid, last attempt
+          number = phoneUtil.parse(`+${cleanedNumber}`);
+        }
+      }
+
+      if (phoneUtil.isValidNumber(number)) {
+        const phoneType = phoneUtil.getNumberType(number);
+        const cc = String(number.getCountryCode());
+        const formatted = phoneUtil.format(
+          number,
+          GoogleLibPhoneNumber.PhoneNumberFormat.E164,
+        );
+        const result = `+${cc} ${formatted.slice(cc.length + 1)}`;
+        if (allowedPhoneTypes.includes(phoneType)) {
+          return result;
+        }
+        throw new Error(`Not mobile: ${result}`);
+      }
+    } catch {}
+    throw new Error('Invalid');
+  }
 }

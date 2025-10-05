@@ -1,11 +1,5 @@
-export declare namespace JSUtils {
-  export type JSPrimitive = string | number | boolean | null | undefined;
-  export type JSArray = JSValue[];
-  export interface JSObject {
-    [key: string]: JSValue;
-  }
-  export type JSValue = JSPrimitive | JSObject | JSArray;
-}
+import { JsonValue } from 'type-fest';
+import { json2xml, xml2json } from 'xml-js';
 
 export class JSUtils {
   /**
@@ -77,34 +71,42 @@ export class JSUtils {
   /**
    * Convert a JSON object to an XML string without declaration
    */
-  static jsonToXml(json: JSUtils.JSValue, namespace = ''): string {
-    const ns = namespace ? `${namespace}:` : '';
-    function processNode(v: JSUtils.JSValue): string {
-      if (!v) return '';
-      let xml = '';
-      if (Array.isArray(v)) {
-        return v.map((item) => processNode(item)).join('');
-      } else if (typeof v === 'object') {
-        for (const key in v) {
-          if (JSUtils.canAccess(v, key)) {
-            const v2 = v[key];
-            if (Array.isArray(v2)) {
-              xml += v2
-                .map(
-                  (item) => `<${ns}${key}>${processNode(item)}</${ns}${key}>`,
-                )
-                .join('');
-            } else if (typeof v2 === 'object') {
-              xml += `<${ns}${key}>${processNode(v2)}</${ns}${key}>`;
-            } else {
-              xml += `<${ns}${key}>${JSUtils.escapeXML(String(v2))}</${ns}${key}>`;
-            }
-          }
+  static jsonToXml(json: JsonValue, ns?: string): string {
+    return json2xml(JSON.stringify(json), {
+      compact: true,
+      elementNameFn: (x) => (ns ? `${ns}:${x}` : x),
+    });
+  }
+
+  /**
+   * Convert an XML string to a JSON object with strings only
+   */
+  static xmlToJson(xml: string): string {
+    const removeJsonTextAttribute = (value: string, parentElement: any) => {
+      try {
+        if (!parentElement) return;
+        const parentOfParent = parentElement['_parent'];
+        const pOpKeys = Object.keys(parentOfParent);
+        const keyNo = pOpKeys.length;
+        const keyName = pOpKeys[keyNo - 1]!;
+        const arrOfKey = parentOfParent[keyName];
+        const arrOfKeyLen = arrOfKey.length;
+        if (arrOfKeyLen > 0) {
+          const arr = arrOfKey;
+          const arrIndex = arrOfKey.length - 1;
+          arr[arrIndex] = value;
+        } else {
+          parentOfParent[keyName] = value;
         }
-        return xml;
-      } else return JSUtils.escapeXML(String(v));
-    }
-    return processNode(json);
+      } catch (e) {}
+    };
+    return JSON.parse(
+      xml2json(xml, {
+        compact: true,
+        alwaysArray: true,
+        textFn: removeJsonTextAttribute,
+      }).replaceAll('{}', '""'),
+    );
   }
 
   /**
@@ -129,6 +131,3 @@ export class JSUtils {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 }
-
-// console.log(JSUtils.jsonToXml({ test: { a: 2 }, b: ['asd', 'asf'] }, 'ns1'));
-// console.log(JSUtils.jsonToXml([{ test: null }], 'ns1'));

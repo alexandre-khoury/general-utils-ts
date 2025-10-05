@@ -1,6 +1,6 @@
 {
   "name": "@alexandre-khoury/general-utils",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "private": false,
   "description": "TS/JS utils that work in browser+node environments",
   "repository": {
@@ -16,21 +16,28 @@
       "import": "./dist/src/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc",
-    "lint": "eslint --fix ./src"
+    "lint": "eslint --fix ./src",
+    "test": "vitest"
   },
   "dependencies": {
-    "p-queue": "8.1.1",
+    "@alexandre-khoury/config-ts": "1.0.0",
     "google-libphonenumber": "3.2.43",
-    "@alexandre-khoury/config-ts": "1.0.0"
+    "p-queue": "8.1.1",
+    "type-fest": "5.0.1",
+    "xml-js": "1.6.11"
   },
   "devDependencies": {
     "@types/google-libphonenumber": "7.4.30",
-    "typescript": "5.8.3",
+    "@types/node": "24.5.2",
     "eslint": "9.36.0",
-    "@types/node": "24.5.2"
+    "typescript": "5.8.3",
+    "vitest": "3.2.4"
   },
   "engines": {
     "node": ">=24",
