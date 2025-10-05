@@ -1,6 +1,6 @@
 {
   "name": "@alexandre-khoury/general-utils",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": false,
   "description": "TS/JS utils that work in browser+node environments",
   "repository": {
@@ -17,7 +17,7 @@
     }
   },
   "files": [
-    "dist"
+    "dist/src"
   ],
   "scripts": {
     "build": "tsc",

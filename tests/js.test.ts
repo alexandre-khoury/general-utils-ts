@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { JSUtils } from './js.js';
+import { JSUtils } from '../src/index.js';
 
 test('jsonToXml empty', () => {
   expect(JSUtils.jsonToXml({})).toBe('');
@@ -50,29 +50,29 @@ test('xmlToJson empty', () => {
 });
 
 test('xmlToJson basic 1', () => {
-  expect(JSUtils.xmlToJson('<a/>')).toStrictEqual({ a: [''] });
+  expect(JSUtils.xmlToJson('<a/>')).toStrictEqual({ a: '' });
 });
 
 test('xmlToJson basic 2', () => {
-  expect(JSUtils.xmlToJson('<a></a>')).toStrictEqual({ a: [''] });
+  expect(JSUtils.xmlToJson('<a></a>')).toStrictEqual({ a: '' });
 });
 
 test('xmlToJson basic 3', () => {
-  expect(JSUtils.xmlToJson('<a>b</a>')).toStrictEqual({ a: ['b'] });
+  expect(JSUtils.xmlToJson('<a>b</a>')).toStrictEqual({ a: 'b' });
 });
 
 test('xmlToJson basic 4', () => {
-  expect(JSUtils.xmlToJson('<a>2</a>')).toStrictEqual({ a: ['2'] });
+  expect(JSUtils.xmlToJson('<a>2</a>')).toStrictEqual({ a: '2' });
 });
 
 test('xmlToJson basic 5', () => {
   expect(JSUtils.xmlToJson('<x><a>2</a><a>3</a><b>4</b></x>')).toStrictEqual({
-    x: [{ a: ['2', '3'], b: ['4'] }],
+    x: { a: ['2', '3'], b: '4' },
   });
 });
 
 test('xmlToJson basic 6', () => {
   expect(JSUtils.xmlToJson('<x><a></a><a>true</a></x>')).toStrictEqual({
-    x: [{ a: ['', 'true'] }],
+    x: { a: ['', 'true'] },
   });
 });

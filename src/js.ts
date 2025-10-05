@@ -103,7 +103,6 @@ export class JSUtils {
     return JSON.parse(
       xml2json(xml, {
         compact: true,
-        alwaysArray: true,
         textFn: removeJsonTextAttribute,
       }).replaceAll('{}', '""'),
     );
